@@ -25,4 +25,4 @@ So overall compelxity is O(n)
 
 ## Problem 3 
 
-In this problem we have a space complexity of just one list o(n) on which length will be given by K and the range would be given by 0 to k, randint takes O log(n) to generate a number, and we have a chance of (N - K)/N of the remaining numbers to appear, and a chance of N/K getting it at the first time, so I'm gonna assume at the best case scenario runs O(log(n)), and a very bad case scenario O(n).
+In this problem we have a space complexity of just one list o(n) on which length will be given by N and the range would be given by 0 to k, randint takes O log(n) to generate a number, and we have a chance of (N - K)/N of the remaining numbers to appear, and a chance of N/K getting it at the first time, so I'm gonna assume at the best case scenario runs O(log(n)), and a very bad case scenario O(n).
