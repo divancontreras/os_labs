@@ -15,8 +15,6 @@ class foo(object):
     def calc_median(self):
         return median(self.median_list)
 
-
-x = foo()
 print("Test add operation")
 n1= int(input("first number: "))
 n2 = int(input("second number: "))

@@ -1,4 +1,4 @@
-from time import time
+from time import time 
 
 def first_non_repeating(word):
     letter_dict = {}
@@ -14,7 +14,7 @@ def first_non_repeating(word):
             return letter
     return None
 
-word = input()
+word = input("Input a word: ")
 after = time()
-word = first_non_repeating(word)
-print (f"It was {word} and it took {time()-after}")
+letter = first_non_repeating(word)
+print (f"It was {letter} and it took", time()-after)
