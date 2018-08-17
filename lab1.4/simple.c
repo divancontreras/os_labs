@@ -6,7 +6,37 @@
 
 //#include <sys/sysinfo.h>
 /* This function is called when the module is loaded. */
+struct Student {
+   int   id;
+   char *name;
+   int   age;
+};  
 
+int lastwritten = 0;
+struct Student students[10];
+
+void addStudent(int id, char *name, int age)
+{
+    struct Student student;
+    student.id = id;
+    student.name = name;
+    student.age = age;
+    students[lastwritten] = student;
+    lastwritten++;
+}
+
+void listStudents(void)
+{
+    int i, id, age;
+    char *name;
+    for (i = 0; i < lastwritten; i++)
+    {
+        id = students[i].id;
+        name = students[i].name;
+        age = students[i].age;
+        printk("%d .- id: %d name: %s age: %i\n",i , id, name, age);
+    }
+}
 
 void getSystemInfo(void)
 {
@@ -28,6 +58,9 @@ int simple_init(void)
 {
     printk("e This is a initialization message");
     printk(KERN_INFO "Loading Module\n");
+    addStudent(11, "Diego", 21);
+    addStudent(1231, "Ivan", 23);
+    listStudents();
     getUpTime();    
     getSystemInfo();
     return 0;
