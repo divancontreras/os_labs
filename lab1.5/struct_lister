@@ -1,0 +1,30 @@
+#!/bin/sh
+# first
+# This file looks through all the files in the current
+# directory for the string POSIX, and then prints the names of
+# those files to the standard output.
+find . -name "linux_source_structure.txt" -exec rm -f {} \;
+i=1
+path="/usr/src/"
+while [[ $(find ${path} -mindepth ${i} -maxdepth ${i}) != "" ]]
+do
+    echo "${i} level directories!" >> linux_source_structure.txt
+    if [[ $(find $path -mindepth ${i} -maxdepth ${i} | egrep "\.h$") != "" ]]
+    then
+        echo ".h header files" >> linux_source_structure.txt
+        for file in $(find $path -mindepth ${i} -maxdepth ${i} | egrep "\.h$")
+        do
+            echo $file
+        done >> linux_source_structure.txt
+    fi
+    if [[ $(find $path -mindepth ${i} -maxdepth ${i} | egrep "\.c$") != "" ]]
+    then
+        echo ".c source code files" >> linux_source_structure.txt
+        for file in $(find $path -mindepth ${i} -maxdepth ${i} | egrep "\.c$")
+        do
+            echo $file
+        done >> linux_source_structure.txt
+    fi
+    ((i++))
+done
+exit 0
