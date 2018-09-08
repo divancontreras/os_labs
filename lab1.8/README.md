@@ -1,7 +1,7 @@
 
 ## OS LAB1.8
 
-###To run
+### To run
 
 To consume just run the already compiled file or compile it as follows:
 
