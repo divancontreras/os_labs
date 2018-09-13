@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # first
 # This file looks through all the files in the current
 # directory for the string POSIX, and then prints the names of
