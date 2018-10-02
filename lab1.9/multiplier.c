@@ -2,15 +2,18 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <math.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <string.h>
 
-#define LIST_MAX      3
+#define LIST_MAX      2000
 
 pthread_mutex_t *mutexes;
 long ** buffers;
 int NUM_BUFFERS;
 long * result;
 long *matB, *matA;
-
+int counter = 0;
 typedef struct {
     int row;
     int column;
@@ -42,6 +45,7 @@ long * getColumn(int col, long *matrix)
     {
         aux[j] = matrix[i];
     }
+ 
     return aux;
 }
 
@@ -54,8 +58,7 @@ long * getRow(int row, long *matrix)
     {
         aux[j] = matrix[i];
     }
-    return aux;
-    
+    return aux;   
 }
 
 long dotProduct(long *vec1, long *vec2)
@@ -69,30 +72,36 @@ long dotProduct(long *vec1, long *vec2)
     return sum;
 }
 
-void *thread_multiply(void *params) 
+void *thread_multiply(void *param) 
 {
     int status;
-    long * column;
-    long * row;
-    row = getRow(params.row, matA)
+    long *column;
+    long *row;
+    arguments *params = param;
+    row=malloc(LIST_MAX*sizeof(long));
+    column=malloc(LIST_MAX*sizeof(long));
+    memcpy(row, getRow(params->row, matA), LIST_MAX*sizeof(long)); 
+    memcpy(column, getColumn(params->column, matB), LIST_MAX*sizeof(long));
     do {
         status = getLock();
     } while(status < 0);
-    
-
+    result[counter++] = dotProduct(row, column);
+    releaseLock(status);
 }
 
 long *multiply(long *matA, long *matB)
-{   
+{
+    pthread_t tid [LIST_MAX];
     int i, j;
     long * result;
-    column = OAg
     pthread_attr_t attr;
+    long *column;
+    long *row;
     pthread_attr_init(&attr);
     arguments args;   
-    for (i = 0; i < MAX_LIST, i++)
+    for (i = 0; i < LIST_MAX    ; i++)
     {
-        for (j = 0; j < MAX_LIST; j++)
+        for (j = 0; j < LIST_MAX; j++)
         {
             args.row = j;
             args.column = i;
@@ -143,8 +152,12 @@ int saveResultMatrix(long *result)
 int main(int argc, char **argv)
 {   
     int i;
-    if(argc==2)
-        NUM_BUFFERS = (int)argv[1];
+    if(argc!=2)
+    {
+        printf("Arguments missing!\n");
+        return -1;
+    }
+    NUM_BUFFERS = (int)argv[1];
     buffers = malloc(NUM_BUFFERS*sizeof(long*)) ;
     mutexes=malloc(NUM_BUFFERS*sizeof(pthread_mutex_t)); 
     matA = readMatrix("matC.dat");
