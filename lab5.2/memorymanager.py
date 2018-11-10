@@ -15,29 +15,27 @@ def memory_manager():
         address = int(address)
         tlb_found = False
         page_found = False
-        i = 0
         for tlb_val in tlb:
             if tlb_val >> 8 == address >> 8:
                 physical_address = ((tlb_val & 0xFF) << 8) and (address & 0xFF)
                 tlb_found = True
-        if tlb_found:
-            break
-        for i, page_val in enumerate(page_table):
-            if page_val == address >> 8:
-                physical_address = (i << 8) and (address & 0xFF)
-                page_found = True
-        if page_found:
-            break
-        if not tlb_found and not tlb_found:
+                break
+        if not tlb_found:
+            for i, page_val in enumerate(page_table):
+                if page_val == address >> 8:
+                    physical_address = (i << 8) and (address & 0xFF)
+                    page_found = True
+                    break
+        if not page_found and not tlb_found:
             tlb[page_num%16] = (address & 0xff00) + page_num
             page_table[page_num] = (address >> 8)
             for i in range(256):
                 physical_mem[(page_num << 8) + i] = stored_bin[(address & 0xff00) + i]
             physical_address = (page_num << 8) + (address & 0xff)
-        page_num += 1
-        print("{0}.- Virtual address: {1} Physical address: {2} Value: {3}".format(n,
+            page_num += 1
+        print("{0}.- Virtual address: {1} Physical address: {2} Value: {3}".format(n+1,
                                                                                    address,
                                                                                    physical_address,
-                                                                                   physical_mem[n]))
+                                                                                   physical_mem[physical_address]))
 
 memory_manager()
