@@ -7,28 +7,27 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <time.h>
+#include <string.h>
 
 int main(int argc, char *argv[])
 {
     int sockfd;
     int len;
-    struct tm * timeinfo;
     struct sockaddr_in address;
     int result;
-    char ch = 'A';
     char *client_id;
     if (argc < 2)
     {
         printf("A client name argument is mandatory! \n");
         exit(0);
     }
+    client_id = argv[1];
+    
 /*  Create a socket for the client.  */
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
 /*  Name the socket, as agreed with the server.  */
-    name = argv[1];
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = inet_addr("127.0.0.1");
     address.sin_port = htons(9734);
@@ -38,16 +37,24 @@ int main(int argc, char *argv[])
 
     result = connect(sockfd, (struct sockaddr *)&address, len);
 
-    if(result == -1) {
+    if(result == -1) 
+    {
         perror("oops: client3");
         exit(1);
     }
-
+    int client_id;
 /*  We can now read/write via sockfd.  */
-
-    write(sockfd, &name, sizeof(name));
-    read(sockfd, &timeinfo, sizeof(timeinfo));
-    printf("time from server = %s\n", asctime (timeinfo));
+    write(sockfd, &client_id, sizeof(client_id));
+    write(sockfd, &parar, sizeof(parar));
+    while(true)
+    {
+        read(sockfd, &rawtime, sizeof(time_t));
+        printf("Client %d time from server = %s\n",
+               client_id,
+               asctime(localtime(&rawtime)));
+        sleep(1);
+    }
+    write(sockfd, &client_id, sizeof(client_id));
     close(sockfd);
     exit(0);
 }

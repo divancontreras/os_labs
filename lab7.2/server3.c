@@ -8,19 +8,20 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
 
-void get_time(struct tm* time_value)
+char *get_time()
 {
-    time_t rawtime;
-    time ( &rawtime );
-    time_value = localtime ( &rawtime );
+    time_t now;
+    time(&now);
+    return &now;  
 }
 
 void print_current_time()
 {
-    struct tm * timeinfo;
-    get_time(timeinfo);
-    printf ( "Current local time and date: %s", asctime (timeinfo) );
+    time_t now;
+    time(&now);
+    printf("Current time : %s\n", ctime(&now));
 }
 
 
@@ -30,9 +31,10 @@ int main()
     int server_len, client_len;
     struct sockaddr_in server_address;
     struct sockaddr_in client_address;
+    int client_id;
+    char buf[256];
     char *name;
-    struct tm * timeinfo;
-
+    int n;
 
 /*  Remove any old socket and create an unnamed socket for the server.  */
 
@@ -47,25 +49,32 @@ int main()
     bind(server_sockfd, (struct sockaddr *)&server_address, server_len);
 
 /*  Create a connection queue and wait for clients.  */
-
+    int msglen, client_id;
     listen(server_sockfd, 5);
     while(1) {
-        char ch;
-    
         printf("server waiting\n");
 
 /*  Accept a connection.  */
-
+        
         client_len = sizeof(client_address);
         client_sockfd = accept(server_sockfd, 
             (struct sockaddr *)&client_address, &client_len);
 
 /*  We can now read/write to client on client_sockfd.  */
-        
-        read(client_sockfd, &name, sizeof(name));
-        ch++;
-        write(client_sockfd, &name, sizeof(name));
-        close(client_sockfd);
+        //while((n = recv(client_sockfd, name, sizeof(name), 0)) > 0)
+        //        name.append(buf, buf + n);
+        if(fork() != 0)
+        {
+            close(client_sockfd);
+            exit(0);
+        }    
+        read(client_sockfd, &client_id, sizeof(client_id));
+        printf("Client %i connected", client_id);
+        print_current_time();
+        while(true)
+        {
+            write(client_sockfd, &get_time(), sizeof(time_t));
+            sleep(1);
+        }
     }
 }
-
