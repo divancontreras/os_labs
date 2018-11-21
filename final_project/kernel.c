@@ -51,7 +51,7 @@ void terminal_initialize()
 {
 	terminal_row = 0;
 	terminal_column = 0;
-	terminal_color = make_color(COLOR_LIGHT_GREY, COLOR_BLACK);
+	terminal_color = make_color(COLOR_RED, COLOR_BLUE);
 	terminal_buffer = (uint16_t*) 0xB8000;
 	for ( size_t y = 0; y < VGA_HEIGHT; y++ )
 		for ( size_t x = 0; x < VGA_WIDTH; x++ )
@@ -95,5 +95,10 @@ void terminal_writestring(const char* data)
 void kmain()
 {
 	terminal_initialize();
-	terminal_writestring("Hello, kernel World!\n");
+	int i = 0;
+	for (i; i < 100; i++)
+	{
+		terminal_color = make_color(i%16, i%16+4);
+		terminal_writestring("Hello, kernel World!\n");
+	}
 }
